@@ -1,6 +1,6 @@
 Yii2 Wizard Widget
 ==================
-Multi step wizard widget using tabs to guide a user through steps to complete a form
+Multi step wizard widget using tabs to guide a user through steps to complete a task. Based on the Form wizard (using tabs) from lukepzak (see http://bootsnipp.com/snippets/featured/form-wizard-using-tabs).
 
 Installation
 ------------

@@ -1,8 +1,8 @@
 {
     "name": "drsdre/yii2-wizardwidget",
-    "description": "Multi step wizard widget using tabs to guide a user through steps to complete a form. Based on Form wizrd (using tabs) from lukepzak. See http://bootsnipp.com/snippets/featured/form-wizard-using-tabs",
+    "description": "Multi step wizard widget using tabs to guide a user through steps to complete a task. Based on the Form wizard (using tabs) from lukepzak (see http://bootsnipp.com/snippets/featured/form-wizard-using-tabs).",
     "type": "yii2-extension",
-    "keywords": ["yii2","extension","widget","wizard","ui","form","tabs"],
+    "keywords": ["yii2","extension","widget","wizard","ui","tabs"],
     "license": "MIT",
     "authors": [
         {
