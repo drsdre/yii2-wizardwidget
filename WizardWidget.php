@@ -9,7 +9,7 @@ namespace drsdre\wizardwidget;
 use yii;
 use yii\base\Widget;
 use yii\web\View;
-use yii\bootstrap\Tabs;
+use yii\helpers\Html;
 
 /**
  * Widget for wizard widget
@@ -19,98 +19,144 @@ use yii\bootstrap\Tabs;
  */
 class WizardWidget extends Widget {
 
+	/**
+	 * @var string widget html id
+	 */
 	public $id = 'wizard';
 
-	public $button_previous = 'Previous';
+	/**
+	 * @var array default button configuration
+	 */
+	public $default_buttons = [
+		'prev' => ['title' => 'Previous', 'options' => [ 'class' => 'btn btn-default', 'type' => 'button']],
+		'next' => ['title' => 'Next', 'options' => [ 'class' => 'btn btn-default', 'type' => 'button']],
+		'save' => ['title' => 'Save', 'options' => [ 'class' => 'btn btn-default', 'type' => 'button']],
+		'skip' => ['title' => 'Skip', 'options' => [ 'class' => 'btn btn-default', 'type' => 'button']],
+	];
 
-	public $button_next = 'Next';
-
-	public $button_save = 'Save';
-
-	public $button_skip = 'Skip';
-
+	/**
+	 * @var array the wizard step definition
+	 */
 	public $steps = [];
 
+	/**
+	 * @var string optional final complete step content
+	 */
 	public $complete_content = '';
 
+	/**
+	 * Main entry to execute the widget
+	 */
 	public function run() {
 		parent::run();
 		WizardWidgetAsset::register($this->getView());
+
+		// Wizard content
+		$wizard_line = '';
+		$tab_content = '';
+
+		// Navigation tracker
+		end($this->steps);
+		$last_id = key($this->steps);
+
+		$first = true;
+
+		foreach ($this->steps as $id => $step) {
+
+			$wizard_line .= '<li role="presentation" class="'.($first?"active":"disabled").'">'.
+			                Html::a('<span class="round-tab"><i class="'.$step['icon'].'"></i></span>', '#step'.$id, [
+				                'data-toggle' => 'tab',
+				                'aria-controls' => 'step'.$id,
+				                'role' => 'tab',
+				                'title' => $step['title'],
+			                ]).
+		                    '</li>';
+
+			// Setup tab content (first tab is always active)
+			$tab_content .= '<div class="tab-pane '.($first?"active":"disabled").'" role="tabpanel" id="step'.$id.'">';
+			$tab_content .= $step['content'];
+
+			// Setup navigation buttons
+			$items = [];
+			$button_id = "{$this->id}_step{$id}_";
+			if (!$first) {
+				$items[] = $this->navButton('prev', $step, $button_id);
+			}
+			if (array_key_exists('skippable', $step) and $step['skippable'] === true) {
+				$items[] = $this->navButton('skip', $step, $button_id);
+			}
+			if ($id == $last_id) {
+				$items[] = $this->navButton('save', $step, $button_id);
+			} else {
+				$items[] = $this->navButton('next', $step, $button_id);
+			}
+			$tab_content .= Html::ul($items, ['class' => 'list-inline pull-right', 'encode' => false]);
+
+			// Finish tab
+			$tab_content .= '</div>';
+
+			$first = false;
+		}
+		// Add a complete step if defined
+		if ($this->complete_content) {
+			$wizard_line .= '<li role="presentation" class="disabled">'.
+		         Html::a('<span class="round-tab"><i class="glyphicon glyphicon-ok"></i></span>', '#complete', [
+			         'data-toggle' => 'tab',
+			         'aria-controls' => 'complete',
+			         'role' => 'tab',
+			         'title' => 'Complete',
+		         ]).
+			     '</li>';
+			$tab_content .= '<div class="tab-pane" role="tabpanel" id="complete">'.$this->complete_content.'</div>';
+		}
 
 		// Start widget
 		echo '<div class="wizard" id="'.$this->id.'">';
 
 		// Render the steps line
-		echo '<div class="wizard-inner"><div class="connecting-line"></div><ul class="nav nav-tabs" role="tablist">';
-		$first = true;
-		foreach ($this->steps as $id => $step) {
-			echo '<li role="presentation" class="'.($first?"active":"disabled").'">
-						<a href="#step'.$id.'" data-toggle="tab" aria-controls="step'.$id.'" role="tab" title="'.$step['title'].'">
-                        <span class="round-tab">
-                            <i class="'.$step['icon'].'"></i>
-                        </span>
-						</a>
-					</li>';
-			$first = false;
-		}
-		// Add a complete step if defined
-		if ($this->complete_content) {
-			echo '<li role="presentation" class="disabled">
-						<a href="#complete" data-toggle="tab" aria-controls="complete" role="tab" title="Complete">
-                        <span class="round-tab">
-                            <i class="glyphicon glyphicon-ok"></i>
-                        </span>
-						</a>
-					</li>';
-		}
-
-		echo '</ul></div>';
-
-		// Render the tabs
-		echo '<div class="tab-content">';
-
-		$first = true;
-		$tabs['items'] = [];
-		end($this->steps);
-		$last_id = key($this->steps);
-
-		foreach ($this->steps as $id => $step) {
-
-			echo '<div class="tab-pane '.($first?"active":"disabled").'" role="tabpanel" id="step'.$id.'">';
-			echo $step['content'];
-
-			// Navigation buttons
-			echo '<ul class="list-inline pull-right">';
-			if (!$first) {
-				echo '<li><button id="'.$this->id.'_step'.$id.'_prev" type="button" class="btn btn-default prev-step">'.$this->button_previous.'</button></li>';
-			}
-			if (array_key_exists('skip', $step) and $step('skip') === true) {
-				echo '<li><button id="'.$this->id.'_step'.$id.'_skip" type="button" class="btn btn-default next-step">'.$this->button_skip.'</button></li>';
-			}
-			if ($id == $last_id) {
-				echo '<li><button id="'.$this->id.'_step'.$id.'_save" type="button" class="btn btn-primary next-step">'.$this->button_save.'</button></li>';
-			} else {
-				echo '<li><button id="'.$this->id.'_step'.$id.'_next" type="button" class="btn btn-primary next-step">'.$this->button_next.'</button></li>';
-			}
-			echo '</ul>';
-
-			echo '</div>';
-			$first = false;
-		}
-
-		// Add a complete tab if defined
-		if ($this->complete_content) {
-			echo '<div class="tab-pane" role="tabpanel" id="complete">';
-			echo $this->complete_content;
-			echo '</div>';
-		}
-		// Finish tabs
+		echo '<div class="wizard-inner"><div class="connecting-line"></div>';
+		echo '<ul class="nav nav-tabs" role="tablist">'.$wizard_line.'</ul>';
 		echo '</div>';
+
+		// Render the content tabs
+		echo '<div class="tab-content">'.$tab_content.'</div>';
 
 		// Finalize the content tabs
 		echo '<div class="clearfix"></div>';
 
 		// Finish widget
 		echo '</div>';
+	}
+
+	/**
+	 * Generate navigation button
+	 *
+	 * @param string $button_type prev|skip|next\save
+	 * @param array $step step configuration
+	 * @param string $button_id
+	 *
+	 * @return string
+	 */
+	protected function navButton($button_type, $step, $button_id) {
+		// Always setup an id
+		$options = ['id' => $button_id.$button_type];
+
+		// Apply default button configuration if defined
+		if (isset($this->default_buttons[$button_type]['options'])) {
+			$options = array_merge($options, $this->default_buttons[$button_type]['options']);
+		}
+
+		// Apply step specific button configuration if defined
+		if (isset($step['buttons'][$button_type]['options'])) {
+			$options = array_merge($options, $step['buttons'][$button_type]['options']);
+		}
+
+		// Add navigation class
+		if ($button_type == 'prev') {
+			$options['class'] = $options['class'].' prev-step';
+		} else {
+			$options['class'] = $options['class'].' next-step';
+		}
+		return Html::button($this->default_buttons[$button_type]['title'], $options);
 	}
 }

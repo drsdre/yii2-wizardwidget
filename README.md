@@ -31,20 +31,25 @@ Once the extension is installed, simply use it in your code by  :
 <?php
 $wizard_config = [
 	'id' => 'stepwizard',
-	'button_previous' => Yii::t('Previous'),
-	'button_next' => Yii::t('Next'),
-	'button_save' => Yii::t('Save'),
-	'button_skip' => Yii::t('Skip'),
 	'steps' => [
 		[
 			'title' => 'Step 1',
 			'icon' => 'glyphicon glyphicon-cloud-download',
 			'content' => '<h3>Step 1</h3>This is step 1',
+			'buttons' => [
+				'next' => [
+					'title' => 'Forward', 
+					'options' => [
+						'class' => 'disabled'
+					],
+				 ],
+			 ],
 		],
 		[
 			'title' => 'Step 2',
 			'icon' => 'glyphicon glyphicon-cloud-upload',
 			'content' => '<h3>Step 2</h3>This is step 2',
+			'skippable' => true,
 		],
 		[
 			'title' => 'Step 3',
