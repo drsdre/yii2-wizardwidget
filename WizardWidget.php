@@ -157,6 +157,12 @@ class WizardWidget extends Widget {
 		} else {
 			$options['class'] = $options['class'].' next-step';
 		}
-		return Html::button($this->default_buttons[$button_type]['title'], $options);
+
+		// Display button
+		if (isset($step['buttons'][$button_type]['title'])) {
+			return Html::button($step['buttons'][ $button_type ]['title'], $options);
+		} else {
+			return Html::button($this->default_buttons[ $button_type ]['title'], $options);
+		}
 	}
 }
