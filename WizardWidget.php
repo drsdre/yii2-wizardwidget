@@ -70,7 +70,7 @@ class WizardWidget extends Widget {
 		foreach ($this->steps as $id => $step) {
 
 			// Current or fist step is active, next steps are inactive (previous steps are available)
-			if ($id == $this->start_step or is_null($this->start_step)) {
+			if ($id == $this->start_step or (is_null($this->start_step) && $class == '')) {
 				$class = 'active';
 			} elseif ($class == 'active') {
 				$class = 'disabled';
