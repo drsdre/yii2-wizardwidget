@@ -50,10 +50,12 @@ span.round-tab {
 span.round-tab i{
     color:#555555;
 }
+.wizard li.disabled span.round-tab i{
+    color:#e0e0e0;
+}
 .wizard li.active span.round-tab {
     background: #fff;
     border: 2px solid #5bc0de;
-
 }
 .wizard li.active span.round-tab i{
     color: #5bc0de;
