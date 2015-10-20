@@ -40,6 +40,11 @@ class WizardWidget extends Widget {
 	public $steps = [];
 
 	/**
+	 * @var integer step number to start with (range 1 to number of defined steps)
+	 */
+	public $start_step = 1;
+
+	/**
 	 * @var string optional final complete step content
 	 */
 	public $complete_content = '';
@@ -63,7 +68,7 @@ class WizardWidget extends Widget {
 
 		foreach ($this->steps as $id => $step) {
 
-			$wizard_line .= '<li role="presentation" class="'.($first?"active":"disabled").'">'.
+			$wizard_line .= '<li role="presentation" class="'.($id==($this->start_step-1)?"active":"disabled").'">'.
 			                Html::a('<span class="round-tab"><i class="'.$step['icon'].'"></i></span>', '#step'.$id, [
 				                'data-toggle' => 'tab',
 				                'aria-controls' => 'step'.$id,
@@ -73,7 +78,7 @@ class WizardWidget extends Widget {
 		                    '</li>';
 
 			// Setup tab content (first tab is always active)
-			$tab_content .= '<div class="tab-pane '.($first?"active":"disabled").'" role="tabpanel" id="step'.$id.'">';
+			$tab_content .= '<div class="tab-pane '.($id==($this->start_step-1)?"active":"disabled").'" role="tabpanel" id="step'.$id.'">';
 			$tab_content .= $step['content'];
 
 			// Setup navigation buttons
@@ -97,7 +102,7 @@ class WizardWidget extends Widget {
 
 			$first = false;
 		}
-		// Add a complete step if defined
+		// Add a completed step if defined
 		if ($this->complete_content) {
 			$wizard_line .= '<li role="presentation" class="disabled">'.
 		         Html::a('<span class="round-tab"><i class="glyphicon glyphicon-ok"></i></span>', '#complete', [

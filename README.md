@@ -58,6 +58,7 @@ $wizard_config = [
 		],
 	],
 	'complete_content' => "You are done!", // Optional final screen
+	'start_step' => 2,
 ];
 ?>
 
