@@ -40,9 +40,9 @@ class WizardWidget extends Widget {
 	public $steps = [];
 
 	/**
-	 * @var integer step number to start with (range 1 to number of defined steps)
+	 * @var integer step id to start with
 	 */
-	public $start_step = 1;
+	public $start_step = null;
 
 	/**
 	 * @var string optional final complete step content
@@ -65,15 +65,15 @@ class WizardWidget extends Widget {
 		$last_id = key($this->steps);
 
 		$first = true;
+		$class = '';
 
 		foreach ($this->steps as $id => $step) {
 
-			// Previous steps are available, current step is active & next steps are inactive
-			$class = 'disabled';
-			if ($id < $this->start_step-1) {
-				$class = '';
-			} elseif ($id == $this->start_step-1) {
+			// Current or fist step is active, next steps are inactive (previous steps are available)
+			if ($id == $this->start_step or is_null($this->start_step)) {
 				$class = 'active';
+			} elseif ($class == 'active') {
+				$class = 'disabled';
 			}
 
 			$wizard_line .= '<li role="presentation" class="'.$class.'">'.
@@ -83,7 +83,7 @@ class WizardWidget extends Widget {
 				                'role' => 'tab',
 				                'title' => $step['title'],
 			                ]).
-		                    '</li>';
+			                '</li>';
 
 			// Setup tab content (first tab is always active)
 			$tab_content .= '<div class="tab-pane '.$class.'" role="tabpanel" id="step'.$id.'">';
@@ -110,17 +110,22 @@ class WizardWidget extends Widget {
 
 			$first = false;
 		}
+
 		// Add a completed step if defined
 		if ($this->complete_content) {
-			$wizard_line .= '<li role="presentation" class="disabled">'.
-		         Html::a('<span class="round-tab"><i class="glyphicon glyphicon-ok"></i></span>', '#complete', [
-			         'data-toggle' => 'tab',
-			         'aria-controls' => 'complete',
-			         'role' => 'tab',
-			         'title' => 'Complete',
-		         ]).
-			     '</li>';
-			$tab_content .= '<div class="tab-pane" role="tabpanel" id="complete">'.$this->complete_content.'</div>';
+			// Check if completed tab is set as start_step
+			if ($this->start_step == 'completed') {
+				$class = 'active';
+			}
+			$wizard_line .= '<li role="presentation" class="'.$class.'">'.
+			                Html::a('<span class="round-tab"><i class="glyphicon glyphicon-ok"></i></span>', '#complete', [
+				                'data-toggle' => 'tab',
+				                'aria-controls' => 'complete',
+				                'role' => 'tab',
+				                'title' => 'Complete',
+			                ]).
+			                '</li>';
+			$tab_content .= '<div class="tab-pane '.$class.'" role="tabpanel" id="complete">'.$this->complete_content.'</div>';
 		}
 
 		// Start widget
@@ -151,7 +156,7 @@ class WizardWidget extends Widget {
 	 * @return string
 	 */
 	protected function navButton($button_type, $step, $button_id) {
-		// Always setup an id
+		// Setup a unique button id
 		$options = ['id' => $button_id.$button_type];
 
 		// Apply default button configuration if defined

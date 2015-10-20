@@ -32,7 +32,7 @@ Once the extension is installed, simply use it in your code by  :
 $wizard_config = [
 	'id' => 'stepwizard',
 	'steps' => [
-		[
+		1 => [
 			'title' => 'Step 1',
 			'icon' => 'glyphicon glyphicon-cloud-download',
 			'content' => '<h3>Step 1</h3>This is step 1',
@@ -45,20 +45,20 @@ $wizard_config = [
 				 ],
 			 ],
 		],
-		[
+		2 => [
 			'title' => 'Step 2',
 			'icon' => 'glyphicon glyphicon-cloud-upload',
 			'content' => '<h3>Step 2</h3>This is step 2',
 			'skippable' => true,
 		],
-		[
+		3 => [
 			'title' => 'Step 3',
 			'icon' => 'glyphicon glyphicon-transfer',
 			'content' => '<h3>Step 3</h3>This is step 3',
 		],
 	],
 	'complete_content' => "You are done!", // Optional final screen
-	'start_step' => 2,
+	'start_step' => 2, // Optional, start with a specific step
 ];
 ?>
 
