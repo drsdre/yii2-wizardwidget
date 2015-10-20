@@ -68,7 +68,15 @@ class WizardWidget extends Widget {
 
 		foreach ($this->steps as $id => $step) {
 
-			$wizard_line .= '<li role="presentation" class="'.($id==($this->start_step-1)?"active":"disabled").'">'.
+			// Previous steps are available, current step is active & next steps are inactive
+			$class = 'disabled';
+			if ($id < $this->start_step-1) {
+				$class = '';
+			} elseif ($id == $this->start_step-1) {
+				$class = 'active';
+			}
+
+			$wizard_line .= '<li role="presentation" class="'.$class.'">'.
 			                Html::a('<span class="round-tab"><i class="'.$step['icon'].'"></i></span>', '#step'.$id, [
 				                'data-toggle' => 'tab',
 				                'aria-controls' => 'step'.$id,
@@ -78,7 +86,7 @@ class WizardWidget extends Widget {
 		                    '</li>';
 
 			// Setup tab content (first tab is always active)
-			$tab_content .= '<div class="tab-pane '.($id==($this->start_step-1)?"active":"disabled").'" role="tabpanel" id="step'.$id.'">';
+			$tab_content .= '<div class="tab-pane '.$class.'" role="tabpanel" id="step'.$id.'">';
 			$tab_content .= $step['content'];
 
 			// Setup navigation buttons
