@@ -58,6 +58,7 @@ class WizardWidget extends Widget {
 
 		// Wizard content
 		$wizard_line = '';
+		$wizard_line_distribution = round(100/(count($this->steps)+($this->complete_content?1:0)));
 		$tab_content = '';
 
 		// Navigation tracker
@@ -76,7 +77,7 @@ class WizardWidget extends Widget {
 				$class = 'disabled';
 			}
 
-			$wizard_line .= '<li role="presentation" class="'.$class.'">'.
+			$wizard_line .= '<li role="presentation" class="'.$class.'" style="width:'.$wizard_line_distribution.'%">'.
 			                Html::a('<span class="round-tab"><i class="'.$step['icon'].'"></i></span>', '#step'.$id, [
 				                'data-toggle' => 'tab',
 				                'aria-controls' => 'step'.$id,
@@ -117,7 +118,7 @@ class WizardWidget extends Widget {
 			if ($this->start_step == 'completed') {
 				$class = 'active';
 			}
-			$wizard_line .= '<li role="presentation" class="'.$class.'">'.
+			$wizard_line .= '<li role="presentation" class="'.$class.'" style="width:'.$wizard_line_distribution.'%">'.
 			                Html::a('<span class="round-tab"><i class="glyphicon glyphicon-ok"></i></span>', '#complete', [
 				                'data-toggle' => 'tab',
 				                'aria-controls' => 'complete',
