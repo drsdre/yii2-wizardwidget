@@ -62,5 +62,5 @@ $wizard_config = [
 ];
 ?>
 
-<?= \drsdre\wizardwidget\AutoloadExample::widget($wizard_config); ?>
+<?= \drsdre\wizardwidget\WizardWidget::widget($wizard_config); ?>
 ```
