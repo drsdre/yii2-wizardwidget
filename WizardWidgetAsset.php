@@ -17,6 +17,7 @@ use yii\web\AssetBundle;
 class WizardWidgetAsset extends AssetBundle
 {
 	public $sourcePath = '@drsdre/wizardwidget';
+	public $depends = [ 'yii\web\YiiAsset' ];
 	public $css = [
 		'css/wizardwidget.css',
 	];
