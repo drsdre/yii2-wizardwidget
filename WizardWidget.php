@@ -178,7 +178,9 @@ class WizardWidget extends Widget {
 		}
 
 		// Display button
-		if (isset($step['buttons'][$button_type]['title'])) {
+		if (isset($step['buttons'][$button_type]['html'])) {
+			return $step['buttons'][$button_type]['html'];
+		} elseif (isset($step['buttons'][$button_type]['title'])) {
 			return Html::button($step['buttons'][ $button_type ]['title'], $options);
 		} else {
 			return Html::button($this->default_buttons[ $button_type ]['title'], $options);
