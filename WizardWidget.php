@@ -115,6 +115,7 @@ class WizardWidget extends Widget {
 		// Add a completed step if defined
 		if ($this->complete_content) {
 			// Check if completed tab is set as start_step
+			$class = 'disabled';
 			if ($this->start_step == 'completed') {
 				$class = 'active';
 			}
