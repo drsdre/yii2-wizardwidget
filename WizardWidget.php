@@ -56,10 +56,14 @@ class WizardWidget extends Widget {
 		parent::run();
 		WizardWidgetAsset::register($this->getView());
 
-		// Wizard content
-		$wizard_line = '';
-		$wizard_line_distribution = round(100/(count($this->steps)+($this->complete_content?1:0)));
-		$tab_content = '';
+        // count optimize
+        $count = count($this->steps)+($this->complete_content?1:0);
+
+        // Wizard content
+        $wizard_line = '';
+        $wizard_line_distribution = round(100 / ($count + ($count/100)) ); // count fix when is pair
+        $wizard_line_width = round(100-(100/$count)); // fix width to line is minor to 3 or mayor to 7
+        $tab_content = '';
 
 		// Navigation tracker
 		end($this->steps);
@@ -77,7 +81,15 @@ class WizardWidget extends Widget {
 				$class = 'disabled';
 			}
 
-			$wizard_line .= '<li role="presentation" class="'.$class.'" style="width:'.$wizard_line_distribution.'%">'.
+            // options add in html
+            $options = (isset($step['options'])) ? (is_array($step['options']) ? $step['options'] : [] ) : [] ;
+            $html_options = '';
+
+            foreach($options as $key => $option){
+                $html_options .= "$key=\"$option\" ";
+            }
+
+			$wizard_line .= '<li role="presentation" class="'.$class.'" style="width:'.$wizard_line_distribution.'%" '.$html_options.'>'.
 			                Html::a('<span class="round-tab"><i class="'.$step['icon'].'"></i></span>', '#step'.$id, [
 				                'data-toggle' => 'tab',
 				                'aria-controls' => 'step'.$id,
@@ -134,7 +146,7 @@ class WizardWidget extends Widget {
 		echo '<div class="wizard" id="'.$this->id.'">';
 
 		// Render the steps line
-		echo '<div class="wizard-inner"><div class="connecting-line"></div>';
+		echo '<div class="wizard-inner"><div class="connecting-line" style="width:'.$wizard_line_width.'%"></div>';
 		echo '<ul class="nav nav-tabs" role="tablist">'.$wizard_line.'</ul>';
 		echo '</div>';
 
