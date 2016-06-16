@@ -56,9 +56,13 @@ class WizardWidget extends Widget {
 		parent::run();
 		WizardWidgetAsset::register($this->getView());
 
-		// Wizard content
+
+		// Wizard line calculation
+		$step_count = count($this->steps)+($this->complete_content?1:0);
+		$wizard_line_distribution = round(100 / $step_count); // Percentage
+		$wizard_line_width = round(100 - $wizard_line_distribution); // Percentage
 		$wizard_line = '';
-		$wizard_line_distribution = round(100/(count($this->steps)+($this->complete_content?1:0)));
+
 		$tab_content = '';
 
 		// Navigation tracker
@@ -77,34 +81,49 @@ class WizardWidget extends Widget {
 				$class = 'disabled';
 			}
 
-			$wizard_line .= '<li role="presentation" class="'.$class.'" style="width:'.$wizard_line_distribution.'%">'.
-			                Html::a('<span class="round-tab"><i class="'.$step['icon'].'"></i></span>', '#step'.$id, [
-				                'data-toggle' => 'tab',
-				                'aria-controls' => 'step'.$id,
-				                'role' => 'tab',
-				                'title' => $step['title'],
-			                ]).
-			                '</li>';
+			// Add icons to the wizard line
+			$wizard_line .= Html::tag(
+				'li',
+				Html::a('<span class="round-tab"><i class="'.$step['icon'].'"></i></span>', '#step'.$id, [
+					'data-toggle' => 'tab',
+					'aria-controls' => 'step'.$id,
+					'role' => 'tab',
+					'title' => $step['title'],
+				]),
+				array_merge(
+					[
+						'role' => 'presentation',
+						'class' => $class,
+						'style' => ['width' => $wizard_line_distribution.'%']
+					],
+					isset($step['options']) ? $step['options'] : []
+				)
+			);
 
-			// Setup tab content (first tab is always active)
+			// Setup tab content
 			$tab_content .= '<div class="tab-pane '.$class.'" role="tabpanel" id="step'.$id.'">';
 			$tab_content .= $step['content'];
 
 			// Setup navigation buttons
-			$items = [];
+			$buttons = [];
 			$button_id = "{$this->id}_step{$id}_";
 			if (!$first) {
-				$items[] = $this->navButton('prev', $step, $button_id);
+				// Show previous button except on first step
+				$buttons[] = $this->navButton('prev', $step, $button_id);
 			}
 			if (array_key_exists('skippable', $step) and $step['skippable'] === true) {
-				$items[] = $this->navButton('skip', $step, $button_id);
+				// Show skip button if specified
+				$buttons[] = $this->navButton('skip', $step, $button_id);
 			}
 			if ($id == $last_id) {
-				$items[] = $this->navButton('save', $step, $button_id);
+				// Show save button on last step
+				$buttons[] = $this->navButton('save', $step, $button_id);
 			} else {
-				$items[] = $this->navButton('next', $step, $button_id);
+				// On all previous steps show next button
+				$buttons[] = $this->navButton('next', $step, $button_id);
 			}
-			$tab_content .= Html::ul($items, ['class' => 'list-inline pull-right', 'encode' => false]);
+			// Add buttons to tab content
+			$tab_content .= Html::ul($buttons, ['class' => 'list-inline pull-right', 'encode' => false]);
 
 			// Finish tab
 			$tab_content .= '</div>';
@@ -112,21 +131,31 @@ class WizardWidget extends Widget {
 			$first = false;
 		}
 
-		// Add a completed step if defined
+		// Add a completed step if specified
 		if ($this->complete_content) {
-			// Check if completed tab is set as start_step
 			$class = 'disabled';
+
+			// Check if completed tab is set as start_step
 			if ($this->start_step == 'completed') {
 				$class = 'active';
 			}
-			$wizard_line .= '<li role="presentation" class="'.$class.'" style="width:'.$wizard_line_distribution.'%">'.
-			                Html::a('<span class="round-tab"><i class="glyphicon glyphicon-ok"></i></span>', '#complete', [
-				                'data-toggle' => 'tab',
-				                'aria-controls' => 'complete',
-				                'role' => 'tab',
-				                'title' => 'Complete',
-			                ]).
-			                '</li>';
+
+			// Add completed icon to wizard line
+			$wizard_line .= Html::tag(
+				'li',
+				Html::a('<span class="round-tab"><i class="glyphicon glyphicon-ok"></i></span>', '#complete', [
+					'data-toggle' => 'tab',
+					'aria-controls' => 'complete',
+					'role' => 'tab',
+					'title' => 'Complete',
+				]),
+				[
+					'role' => 'presentation',
+					'class' => $class,
+					'style' => ['width' => $wizard_line_distribution.'%']
+				]
+			);
+
 			$tab_content .= '<div class="tab-pane '.$class.'" role="tabpanel" id="complete">'.$this->complete_content.'</div>';
 		}
 
@@ -134,7 +163,7 @@ class WizardWidget extends Widget {
 		echo '<div class="wizard" id="'.$this->id.'">';
 
 		// Render the steps line
-		echo '<div class="wizard-inner"><div class="connecting-line"></div>';
+		echo '<div class="wizard-inner"><div class="connecting-line" style="width:'.$wizard_line_width.'%"></div>';
 		echo '<ul class="nav nav-tabs" role="tablist">'.$wizard_line.'</ul>';
 		echo '</div>';
 

@@ -73,9 +73,9 @@ span.round-tab:hover {
 .wizard li:after {
     content: " ";
     position: absolute;
-    left: 46%;
+    left: 50%;
     opacity: 0;
-    margin: 0 auto;
+    margin-left: -10px;
     bottom: 0px;
     border: 5px solid transparent;
     border-bottom-color: #5bc0de;
@@ -85,9 +85,9 @@ span.round-tab:hover {
 .wizard li.active:after {
     content: " ";
     position: absolute;
-    left: 46%;
+    left: 50%;
     opacity: 1;
-    margin: 0 auto;
+    margin-left: -10px;
     bottom: 0px;
     border: 10px solid transparent;
     border-bottom-color: #5bc0de;
