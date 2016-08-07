@@ -39,7 +39,7 @@ Each step can have the following parameters:
 -  `start_step`: *string optional* the starting step when wizard is initialized
 
 In each step four different buttons can be configured (display of a button is dependent on position of the step in the sequence):
--  `previous`: (not shown on first step)
+-  `prev`: (not shown on first step)
 -  `next`: (not shown on last step)
 -  `skip`: (shown when skippable is set)
 -  `save`: (shown on the last step)
