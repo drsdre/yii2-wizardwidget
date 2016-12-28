@@ -14,7 +14,7 @@ $(document).ready(function () {
     // Manage next step button click
     $(document).on("click", ".next-step", function (e) {
         var $tab_active = $('.wizard .nav-tabs li.active');
-        var $next_tab = $active.next();
+        var $next_tab = $tab_active.next();
         var $function = jQuery(this).data('function') || false;
 
         if ($function){
